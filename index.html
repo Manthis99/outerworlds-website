@@ -482,39 +482,35 @@
 
     .gear-stage {
       position: relative;
-      height: 300px;
+      height: 380px;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
     }
-
-    .gear {
+    .gear-stage:active { cursor: grabbing; }
+    .gear-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .gear-hint {
       position: absolute;
-      fill: none;
+      bottom: 0.6rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--stone);
+      opacity: 0.7;
+      transition: opacity 0.6s;
+      pointer-events: none;
     }
-    .gear path { fill: currentColor; }
-
-    .gear-a {
-      color: var(--amber);
-      opacity: 0.55;
-      animation: spinCW 14s linear infinite;
-      transform-origin: 110px 110px;
-    }
-    .gear-b {
-      color: var(--copper);
-      opacity: 0.45;
-      animation: spinCCW 7s linear infinite;
-      transform-origin: 46px 46px;
-    }
-    .gear-c {
-      color: var(--amber);
-      opacity: 0.3;
-      animation: spinCW 10s linear infinite;
-      transform-origin: 56px 56px;
-    }
-
-    @keyframes spinCW { to { transform: rotate(360deg); } }
-    @keyframes spinCCW { to { transform: rotate(-360deg); } }
+    .gear-hint.hidden { opacity: 0; }
 
     .create-text h2 { margin-bottom: 1rem; }
     .create-text p + p { margin-top: 0.85rem; }
@@ -1032,9 +1028,167 @@
       background: var(--border);
       margin: 4rem 8vw;
     }
+
+    /* === MICRO-INTERACTIONS === */
+
+    /* 3D tilt on feature cards */
+    .feature-card {
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .feature-card:hover {
+      box-shadow: 0 20px 60px rgba(184, 125, 11, 0.12), 0 0 0 1px rgba(184, 125, 11, 0.15);
+    }
+
+    /* Glow cursor follower on feature cards */
+    .feature-card .card-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      border-radius: inherit;
+      z-index: 0;
+    }
+    .feature-card:hover .card-glow {
+      opacity: 1;
+    }
+
+    /* Button hover ripple */
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(255,255,255,0.18) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Smooth scale on tags */
+    .tag {
+      transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .tag:hover {
+      border-color: var(--amber);
+      background: rgba(184, 125, 11, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* Gallery item lift */
+    .gallery-item {
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease;
+    }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Step hover line accent */
+    .step {
+      position: relative;
+    }
+    .step::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: var(--amber);
+      transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .step:hover::after {
+      width: 100%;
+    }
+
+    /* Nav link underline animation */
+    .nav-links a {
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 1px;
+      background: var(--amber);
+      transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .nav-links a:hover::after,
+    .nav-links a.active::after {
+      width: 100%;
+    }
+
+    /* Smooth section divider fade-in */
+    .section-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      margin: 0 auto 2rem;
+      opacity: 0.5;
+    }
+
+    /* IP card subtle float */
+    .ip-card {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .ip-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(184, 125, 11, 0.08);
+    }
+
+    /* Voxy thumb scale lift */
+    .voxy-thumb {
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.3s, box-shadow 0.3s;
+    }
+    .voxy-thumb:hover {
+      transform: translateY(-3px);
+    }
+
+    /* (gear interactivity handled by canvas JS) */
+
+    /* Manifesto text shimmer */
+    .manifesto-statement em {
+      background: linear-gradient(90deg, var(--amber), var(--glow), var(--amber));
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Hero title letter spacing animation on load */
+    .hero-title {
+      transition: letter-spacing 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* Scroll progress bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--copper), var(--amber), var(--glow));
+      z-index: 9999;
+      transform-origin: left;
+      transform: scaleX(0);
+      transition: none;
+    }
   </style>
 </head>
 <body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded screenshot viewer">
   <img id="lightbox-img" src="" alt="">
@@ -1100,9 +1254,9 @@
 
 <div style="padding: 6rem 0 0;">
   <div id="manifesto" class="reveal">
-    <p class="manifesto-lead">Most servers are a pile of dirt huts and broken promises.</p>
+    <p class="manifesto-lead">You've been looking for this one.</p>
     <p class="manifesto-statement">
-      Outerworlds is where you <em>draft the impossible,</em> then actually build it.
+      The long-play <em>vanilla+</em> Minecraft experience with the Create Mod you didn't think existed.
     </p>
   </div>
 </div>
@@ -1110,9 +1264,9 @@
 <section id="about">
   <div class="about-text reveal">
     <span class="label">§ 001 — The World</span>
-    <h2>Survival kingdom.<br>Engineer's brain.</h2>
-    <p style="margin-top:1.5rem;">Outerworlds is a Minecraft survival SMP for people who take building seriously and still think giant rotating machinery is extremely cool. It is survival at heart, but tuned for players who want clean aesthetics, ambitious infrastructure, and a world that feels crafted instead of spammed into existence.</p>
-    <p>So yes, we absolutely understand the Minecraft species that automates everything. If your first instinct is to over-engineer a farm, optimize a workshop, or move an unhealthy amount of stone with belts and gearboxes, you are among friends.</p>
+    <h2>Survival at heart.<br>Create at scale.</h2>
+    <p style="margin-top:1.5rem;">Outerworlds is a Minecraft survival SMP for people who take building seriously, think giant rotating machinery is extremely cool, and have no tolerance for unpatched creeper holes. Clean aesthetics, ambitious infrastructure, and a world that feels crafted instead of spammed into existence.</p>
+    <p>If your first instinct is to build a farm that produces more than you'll ever need, optimize village trading before you've even been to the nether, move an unhealthy amount of stone with belts, or take on a project three times bigger than is reasonable — you're among friends.</p>
     <div class="tags">
       <span class="tag">Minecraft 1.21.11</span>
       <span class="tag">Create Mod</span>
@@ -1131,16 +1285,9 @@
 <div style="padding: 0 0 6rem;">
   <section id="create" class="reveal">
     <div class="create-grid">
-      <div class="gear-stage" aria-hidden="true">
-        <svg class="gear gear-a" width="220" height="220" viewBox="0 0 220 220">
-          <path d="M 102 8 L 118 8 L 122 22 C 128 24 134 27 139 31 L 153 25 L 164 36 L 158 50 C 162 55 165 61 167 67 L 181 71 L 181 87 L 167 91 C 165 97 162 103 158 108 L 164 122 L 153 133 L 139 127 C 134 131 128 134 122 136 L 118 150 L 102 150 L 98 136 C 92 134 86 131 81 127 L 67 133 L 56 122 L 62 108 C 58 103 55 97 53 91 L 39 87 L 39 71 L 53 67 C 55 61 58 55 62 50 L 56 36 L 67 25 L 81 31 C 86 27 92 24 98 22 Z M 110 58 A 21 21 0 1 0 110.1 58 Z"/>
-        </svg>
-        <svg class="gear gear-b" style="position:absolute;top:28px;right:22px;" width="92" height="92" viewBox="0 0 92 92">
-          <path d="M 40 4 L 52 4 L 55 12 C 59 13.5 63 16 66 19 L 74 15 L 82 23 L 78 31 C 81 34 83.5 38 85 42 L 93 45 L 93 57 L 85 60 C 83.5 64 81 68 78 71 L 82 79 L 74 87 L 66 83 C 63 86 59 88.5 55 90 L 52 98 L 40 98 L 37 90 C 33 88.5 29 86 26 83 L 18 87 L 10 79 L 14 71 C 11 68 8.5 64 7 60 L -1 57 L -1 45 L 7 42 C 8.5 38 11 34 14 31 L 10 23 L 18 15 L 26 19 C 29 16 33 13.5 37 12 Z M 46 28 A 18 18 0 1 0 46.1 28 Z"/>
-        </svg>
-        <svg class="gear gear-c" style="position:absolute;bottom:20px;left:18px;" width="112" height="112" viewBox="0 0 112 112">
-          <path d="M 49 5 L 63 5 L 66 15 C 71 17 76 20 80 24 L 90 19 L 99 28 L 94 38 C 98 42 101 47 103 52 L 113 55 L 113 69 L 103 72 C 101 77 98 82 94 86 L 99 96 L 90 105 L 80 100 C 76 104 71 107 66 109 L 63 119 L 49 119 L 46 109 C 41 107 36 104 32 100 L 22 105 L 13 96 L 18 86 C 14 82 11 77 9 72 L -1 69 L -1 55 L 9 52 C 11 47 14 42 18 38 L 13 28 L 22 19 L 32 24 C 36 20 41 17 46 15 Z M 56 33 A 23 23 0 1 0 56.1 33 Z"/>
-        </svg>
+      <div class="gear-stage" id="gearStage" aria-hidden="true">
+        <canvas id="gearCanvas"></canvas>
+        <span class="gear-hint" id="gearHint">Drag to spin</span>
       </div>
 
       <div class="create-text">
@@ -1149,9 +1296,9 @@
         <div class="version-badge">Minecraft 1.21.11 · Fabric · Create Mod (Unofficial Fork)</div>
         <p>Create turns Minecraft into a clockwork kingdom builder. Design conveyor lines, gear trains, gantries, depots, steam plants, item-sorting vaults, and machines that look like they belong in a dwarven engineering manual.</p>
         <p style="margin-top:0.85rem;">The result is wonderfully technical without turning the server into modded chaos. You still get the survival loop, but now your farms, workshops, rail hubs, and city infrastructure can be beautiful and absurdly efficient at the same time.</p>
-        <a href="https://drive.google.com/drive/u/2/folders/1N6Zd9dSXO4OvjvSKD7U31i__QhACtNYl" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top:2rem;">
-          Get the Modpack
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <a href="#join" class="btn btn-primary" style="margin-top:2rem;">
+          How to Join
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
         </a>
       </div>
     </div>
@@ -1161,26 +1308,29 @@
 <section id="features">
   <div class="reveal">
     <span class="label">§ 003 — Why This Server</span>
-    <h2>Built for builders.<br>Powered by ambition.</h2>
+    <h2>Built for builders.<br>Here's what you get.</h2>
   </div>
 
   <div class="feature-grid">
     <article class="feature-card reveal" style="transition-delay:0.08s;">
-      <span class="feature-kicker">Creative Workflow</span>
-      <h3>Design in creative. Build in survival.</h3>
-      <p>Prototype in the creative server, turn it into a <strong>Litematica</strong> schematic, then bring it into survival once the build is actually good. Fewer regrets. Better roofs.</p>
+      <div class="card-glow"></div>
+      <span class="feature-kicker">Professional Builder Workflow</span>
+      <h3>Draft in creative. Schematic it. Build it in survival.</h3>
+      <p>We run a dedicated creative server where you can prototype builds with <strong>Axiom</strong> and <strong>Litematica</strong>. Design your build, generate a schematic, then use it as a blueprint to build block-by-block in the survival world. No guesswork. No tearing down half a castle because the proportions were off.</p>
     </article>
 
     <article class="feature-card reveal" style="transition-delay:0.16s;">
-      <span class="feature-kicker">Builder Culture</span>
+      <div class="card-glow"></div>
+      <span class="feature-kicker">Builder's Culture</span>
       <h3>Pretty factories. Serious standards.</h3>
-      <p>We love technical players, but not ugly machine spam. The goal is automation that actually looks like it belongs in the world and deserves a cinematic flyover.</p>
+      <p>We love technical players, but not ugly machine spam. Your automation should look like it belongs in the world — the kind of build that deserves a cinematic flyover, not a teardown order.</p>
     </article>
 
     <article class="feature-card reveal" style="transition-delay:0.24s;">
-      <span class="feature-kicker">Render Distance Sorcery</span>
-      <h3>Voxy makes the world feel enormous.</h3>
-      <p><strong>Voxy</strong> gives you absurdly long sightlines on supported systems, so bases read like landmarks and the world finally looks as huge as it feels.</p>
+      <div class="card-glow"></div>
+      <span class="feature-kicker">Extreme Render Distance</span>
+      <h3>See the entire world with Voxy.</h3>
+      <p><strong>Voxy</strong> is a lightweight LoD mod that converts terrain into simplified meshes as you explore, letting you render absurd distances without tanking performance. Your builds become visible landmarks from thousands of blocks away. Requires OpenGL 4.6.</p>
     </article>
   </div>
 
@@ -1190,8 +1340,8 @@
         <img id="voxy-main-image" src="images/voxy far over city.png" alt="Long-distance Voxy render showing the Outerworlds skyline and surrounding terrain" loading="lazy">
         <div class="voxy-copy">
           <span class="label">Voxy Showcase</span>
-          <h3>Ridiculous sightlines. Actually useful horizons.</h3>
-          <p>Voxy turns the world into proper scenery. Distant builds read like landmarks, terrain becomes part of the composition, and your skyline finally gets the dramatic reveal it deserves.</p>
+          <h3>This is what your world actually looks like.</h3>
+          <p>Voxy generates level-of-detail meshes from terrain you've already explored, so you get real long-distance views — not fog. With shader support, the whole thing looks incredible. Your builds read as landmarks across the entire horizon.</p>
         </div>
       </div>
       <div class="voxy-rail">
@@ -1215,7 +1365,7 @@
 <section id="gallery">
   <div class="gallery-head reveal">
     <span class="label">§ 004 — The World</span>
-    <h2>Built by hand.<br>Then overbuilt on purpose.</h2>
+    <h2>Everything here<br>was built in survival.</h2>
   </div>
 
   <div class="gallery-grid reveal" style="transition-delay:0.2s;">
@@ -1348,8 +1498,8 @@
 <section id="economy">
   <div class="economy-bg"></div>
   <span class="label reveal">§ 006 — Commerce</span>
-  <h2 class="reveal" style="transition-delay:0.1s;">A player economy,<br>with tasteful obsession.</h2>
-  <p class="reveal" style="transition-delay:0.2s;">Outerworlds rewards the kind of player who can turn infrastructure into influence. Shops, materials, schematics, machine parts, and specialty builds all become part of a real community economy, especially when the world is still young and everyone needs everything.</p>
+  <h2 class="reveal" style="transition-delay:0.1s;">In-game commerce.<br>We're building it now.</h2>
+  <p class="reveal" style="transition-delay:0.2s;">We're working on a full in-game e-commerce system — player shops, material trading, schematic sales, the works. It's early and we're still figuring out the details. That's the fun part. Join now and help shape how it all works.</p>
   <p class="economy-coming reveal" style="transition-delay:0.3s;">Founding era.</p>
 </section>
 
@@ -1591,6 +1741,343 @@
   function closeLightbox() {
     lightbox.classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  // === MICRO-INTERACTIONS ===
+
+  // Scroll progress bar
+  const scrollProgress = document.getElementById('scrollProgress');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+    scrollProgress.style.transform = `scaleX(${progress})`;
+  }, { passive: true });
+
+  // 3D tilt + glow on feature cards
+  document.querySelectorAll('.feature-card').forEach((card) => {
+    const glow = card.querySelector('.card-glow');
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -6;
+      const rotateY = ((x - centerX) / centerX) * 6;
+
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+
+      if (glow) {
+        glow.style.background = `radial-gradient(circle 200px at ${x}px ${y}px, rgba(232, 160, 58, 0.12), transparent)`;
+      }
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+      if (glow) glow.style.background = '';
+    });
+  });
+
+  // Button ripple position tracking
+  document.querySelectorAll('.btn').forEach((btn) => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      btn.style.setProperty('--ripple-x', x + '%');
+      btn.style.setProperty('--ripple-y', y + '%');
+    });
+  });
+
+  // === INTERACTIVE GEAR TRAIN ===
+  (function initGears() {
+    const canvas = document.getElementById('gearCanvas');
+    const stage = document.getElementById('gearStage');
+    const hint = document.getElementById('gearHint');
+    if (!canvas || !stage) return;
+
+    const ctx = canvas.getContext('2d');
+    let W, H, dpr;
+
+    function resize() {
+      dpr = window.devicePixelRatio || 1;
+      const rect = stage.getBoundingClientRect();
+      W = rect.width;
+      H = rect.height;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Gear definition: { x, y, radius, teeth, toothDepth, holeRadius, color, direction, angle }
+    // direction: 1 = CW, -1 = CCW — meshing gears alternate
+    const amber = 'rgba(207, 139, 31, ';
+    const copper = 'rgba(151, 74, 26, ';
+
+    // Main drive gear (center)
+    const gears = [];
+    const cx = 0.48, cy = 0.46;
+
+    function g(xf, yf, r, teeth, td, hr, col, dir) {
+      return { xf, yf, r, teeth, toothDepth: td, holeRadius: hr, color: col, dir, angle: 0 };
+    }
+
+    // Gear train: main → medium → small, plus a large slow gear and a tiny fast one
+    // Teeth must mesh: ratio = teeth_a / teeth_b, speeds inversely proportional
+    gears.push(g(0.48, 0.42, 70, 16, 14, 18, amber + '0.65)', 1));       // A: main drive
+    gears.push(g(0.78, 0.30, 40, 10, 11, 10, copper + '0.55)', -1));     // B: meshed top-right
+    gears.push(g(0.22, 0.28, 50, 12, 12, 13, amber + '0.45)', -1));      // C: meshed top-left
+    gears.push(g(0.16, 0.62, 32, 8, 10, 8, copper + '0.5)', 1));         // D: meshed off C
+    gears.push(g(0.76, 0.68, 55, 14, 13, 14, amber + '0.35)', 1));       // E: large slow bottom-right
+    gears.push(g(0.92, 0.50, 25, 8, 9, 6, copper + '0.4)', -1));         // F: tiny fast
+
+    // Compute gear-to-gear speed ratios from the main gear
+    // gears[0] is the drive gear. Others are linked in a chain.
+    const links = [
+      [0, 1], // A drives B
+      [0, 2], // A drives C
+      [2, 3], // C drives D
+      [0, 4], // A drives E
+      [4, 5], // E drives F
+    ];
+
+    // Speed multipliers relative to drive gear
+    const speedMult = new Array(gears.length).fill(1);
+    for (const [from, to] of links) {
+      speedMult[to] = speedMult[from] * (gears[from].teeth / gears[to].teeth) * -1;
+    }
+
+    // Drive angle (radians) — this is what the user controls
+    let driveAngle = 0;
+    let velocity = 0.008; // auto-spin speed (rad/frame)
+    let isDragging = false;
+    let lastMouseX = 0;
+    let dragVelocity = 0;
+    let hintHidden = false;
+
+    function drawGear(gear, scale) {
+      const x = gear.xf * W;
+      const y = gear.yf * H;
+      const r = gear.r * scale;
+      const teeth = gear.teeth;
+      const td = gear.toothDepth * scale;
+      const hr = gear.holeRadius * scale;
+      const angle = gear.angle;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      // Draw gear body with teeth
+      ctx.beginPath();
+      const step = (Math.PI * 2) / teeth;
+      const halfStep = step / 2;
+      const innerR = r - td * 0.3;
+      const outerR = r + td * 0.7;
+
+      for (let i = 0; i < teeth; i++) {
+        const a = step * i;
+        // Inner start
+        const toothWidth = step * 0.35;
+        ctx.lineTo(Math.cos(a - halfStep) * innerR, Math.sin(a - halfStep) * innerR);
+        // Rise to outer
+        ctx.lineTo(Math.cos(a - toothWidth) * outerR, Math.sin(a - toothWidth) * outerR);
+        // Tooth top
+        ctx.lineTo(Math.cos(a + toothWidth) * outerR, Math.sin(a + toothWidth) * outerR);
+        // Fall back to inner
+        ctx.lineTo(Math.cos(a + halfStep) * innerR, Math.sin(a + halfStep) * innerR);
+      }
+      ctx.closePath();
+      ctx.fillStyle = gear.color;
+      ctx.fill();
+
+      // Cut out center hole
+      ctx.beginPath();
+      ctx.arc(0, 0, hr, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(12, 11, 8, 0.95)';
+      ctx.fill();
+
+      // Inner ring detail
+      ctx.beginPath();
+      ctx.arc(0, 0, hr + 3 * scale, 0, Math.PI * 2);
+      ctx.strokeStyle = gear.color.replace(/[\d.]+\)$/, '0.3)');
+      ctx.lineWidth = 1.5 * scale;
+      ctx.stroke();
+
+      // Spoke lines through the gear body
+      const spokeCount = Math.min(teeth, 6);
+      ctx.strokeStyle = gear.color.replace(/[\d.]+\)$/, '0.15)');
+      ctx.lineWidth = 2 * scale;
+      for (let i = 0; i < spokeCount; i++) {
+        const sa = (Math.PI * 2 / spokeCount) * i;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(sa) * (hr + 5 * scale), Math.sin(sa) * (hr + 5 * scale));
+        ctx.lineTo(Math.cos(sa) * (innerR - 4 * scale), Math.sin(sa) * (innerR - 4 * scale));
+        ctx.stroke();
+      }
+
+      // Axle dot
+      ctx.beginPath();
+      ctx.arc(0, 0, 3 * scale, 0, Math.PI * 2);
+      ctx.fillStyle = gear.color.replace(/[\d.]+\)$/, '0.6)');
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    // Belt connecting two gears
+    function drawBelt(g1, g2, scale) {
+      const x1 = g1.xf * W, y1 = g1.yf * H;
+      const x2 = g2.xf * W, y2 = g2.yf * H;
+      const r1 = (g1.r + g1.toothDepth * 0.3) * scale;
+      const r2 = (g2.r + g2.toothDepth * 0.3) * scale;
+
+      const dx = x2 - x1, dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < r1 + r2 + 2) return; // gears are meshing, no belt needed
+
+      const ang = Math.atan2(dy, dx);
+      const cross = Math.asin(Math.max(-1, Math.min(1, (r1 - r2) / dist)));
+
+      ctx.beginPath();
+      ctx.arc(x1, y1, r1, ang + Math.PI / 2 + cross, ang - Math.PI / 2 + cross);
+      ctx.arc(x2, y2, r2, ang - Math.PI / 2 + cross, ang + Math.PI / 2 + cross);
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(184, 125, 11, 0.12)';
+      ctx.lineWidth = 2.5 * scale;
+      ctx.stroke();
+    }
+
+    // Belt items (little squares moving along belt)
+    function drawBeltItems(g1, g2, scale, time) {
+      const x1 = g1.xf * W, y1 = g1.yf * H;
+      const x2 = g2.xf * W, y2 = g2.yf * H;
+      const r1 = (g1.r + g1.toothDepth * 0.3) * scale;
+      const r2 = (g2.r + g2.toothDepth * 0.3) * scale;
+      const dx = x2 - x1, dy = y2 - y1;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < r1 + r2 + 2) return;
+
+      const itemCount = 4;
+      const totalLen = dist * 2;
+      const speed = driveAngle * 0.5;
+
+      for (let i = 0; i < itemCount; i++) {
+        let t = ((i / itemCount) + speed / totalLen) % 1;
+        if (t < 0) t += 1;
+
+        let ix, iy;
+        if (t < 0.5) {
+          const lt = t * 2;
+          ix = x1 + (x2 - x1) * lt;
+          iy = (y1 + (y2 - y1) * lt) - 6 * scale;
+        } else {
+          const lt = (t - 0.5) * 2;
+          ix = x2 + (x1 - x2) * lt;
+          iy = (y2 + (y1 - y2) * lt) + 6 * scale;
+        }
+
+        const size = 5 * scale;
+        ctx.fillStyle = 'rgba(232, 160, 58, 0.35)';
+        ctx.fillRect(ix - size / 2, iy - size / 2, size, size);
+      }
+    }
+
+    function frame() {
+      // Physics
+      if (!isDragging) {
+        // Friction: gently return to auto-spin
+        const autoTarget = 0.008;
+        velocity += (autoTarget - velocity) * 0.01;
+        velocity *= 0.998;
+        driveAngle += velocity;
+      } else {
+        driveAngle += dragVelocity;
+        dragVelocity *= 0.92;
+      }
+
+      // Update all gear angles
+      for (let i = 0; i < gears.length; i++) {
+        gears[i].angle = driveAngle * speedMult[i];
+      }
+
+      const scale = Math.min(W / 420, H / 380, 1.3);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // Draw belts between non-meshing linked gears
+      drawBelt(gears[0], gears[4], scale);
+      drawBeltItems(gears[0], gears[4], scale, driveAngle);
+
+      // Draw gears back to front (large/slow first)
+      const drawOrder = [4, 5, 2, 3, 0, 1];
+      for (const i of drawOrder) {
+        drawGear(gears[i], scale);
+      }
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    // Interaction: drag to spin
+    function onPointerDown(e) {
+      isDragging = true;
+      lastMouseX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      dragVelocity = 0;
+      if (!hintHidden && hint) {
+        hint.classList.add('hidden');
+        hintHidden = true;
+      }
+    }
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const x = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const dx = x - lastMouseX;
+      dragVelocity = dx * 0.006;
+      driveAngle += dragVelocity;
+      lastMouseX = x;
+    }
+    function onPointerUp() {
+      isDragging = false;
+      // Keep momentum: velocity inherits from drag
+      velocity = dragVelocity;
+    }
+
+    stage.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+    stage.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: true });
+    window.addEventListener('touchend', onPointerUp);
+
+    // Scroll over gears also spins them
+    stage.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      driveAngle += e.deltaY * 0.003;
+      velocity = e.deltaY * 0.002;
+      if (!hintHidden && hint) {
+        hint.classList.add('hidden');
+        hintHidden = true;
+      }
+    }, { passive: false });
+  })();
+
+  // Parallax on manifesto
+  const manifesto = document.getElementById('manifesto');
+  if (manifesto) {
+    window.addEventListener('scroll', () => {
+      const rect = manifesto.getBoundingClientRect();
+      const visible = rect.top < window.innerHeight && rect.bottom > 0;
+      if (visible) {
+        const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+        const shift = (progress - 0.5) * 20;
+        manifesto.style.transform = `translateY(${shift}px)`;
+      }
+    }, { passive: true });
   }
 </script>
 
